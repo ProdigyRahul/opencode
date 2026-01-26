@@ -103,6 +103,18 @@ export const { use: useModels, provider: ModelsProvider } = createSimpleContext(
       update(model, state ? "show" : "hide")
     }
 
+    const setProviderVisibility = (providerID: string, state: boolean) => {
+      const models = available().filter((m) => m.provider.id === providerID)
+      for (const m of models) {
+        update({ providerID, modelID: m.id }, state ? "show" : "hide")
+      }
+    }
+
+    const providerAllVisible = (providerID: string) => {
+      const models = available().filter((m) => m.provider.id === providerID)
+      return models.length > 0 && models.every((m) => visible({ providerID, modelID: m.id }))
+    }
+
     const push = (model: ModelKey) => {
       const uniq = uniqueBy([model, ...store.recent], (x) => x.providerID + x.modelID)
       if (uniq.length > 5) uniq.pop()
@@ -127,6 +139,8 @@ export const { use: useModels, provider: ModelsProvider } = createSimpleContext(
       find,
       visible,
       setVisibility,
+      setProviderVisibility,
+      providerAllVisible,
       recent: {
         list: createMemo(() => store.recent),
         push,

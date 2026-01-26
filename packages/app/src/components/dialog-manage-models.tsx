@@ -26,6 +26,22 @@ export const DialogManageModels: Component = () => {
           if (!popularProviders.includes(aProvider) && popularProviders.includes(bProvider)) return 1
           return popularProviders.indexOf(aProvider) - popularProviders.indexOf(bProvider)
         }}
+        groupHeaderRender={(category, items) => {
+          const providerID = items[0]?.provider.id
+          return (
+            <>
+              <span>{category}</span>
+              <div onClick={(e) => e.stopPropagation()}>
+                <Switch
+                  checked={local.model.providerAllVisible(providerID)}
+                  onChange={(checked) => {
+                    local.model.setProviderVisibility(providerID, checked)
+                  }}
+                />
+              </div>
+            </>
+          )
+        }}
         onSelect={(x) => {
           if (!x) return
           const visible = local.model.visible({

@@ -210,6 +210,12 @@ export const { use: useLocal, provider: LocalProvider } = createSimpleContext({
         setVisibility(model: ModelKey, visible: boolean) {
           models.setVisibility(model, visible)
         },
+        setProviderVisibility(providerID: string, visible: boolean) {
+          models.setProviderVisibility(providerID, visible)
+        },
+        providerAllVisible(providerID: string) {
+          return models.providerAllVisible(providerID)
+        },
         variant: {
           current() {
             const m = current()
