@@ -20,6 +20,22 @@ const LOCAL_PREFIX = "opencode."
 const fallback = { disabled: false }
 const cache = new Map<string, string>()
 
+function normalizePath(dir: string): string {
+  if (!dir) return dir
+  let normalized = dir.replace(/\\/g, "/")
+  if (normalized.length > 1 && normalized.endsWith("/")) {
+    if (!/^[A-Za-z]:\/$/.test(normalized)) {
+      normalized = normalized.replace(/\/+$/, "")
+    }
+  }
+  if (normalized.startsWith("//")) {
+    normalized = "//" + normalized.slice(2).replace(/\/+/g, "/")
+  } else {
+    normalized = normalized.replace(/\/+/g, "/")
+  }
+  return normalized
+}
+
 function quota(error: unknown) {
   if (error instanceof DOMException) {
     if (error.name === "QuotaExceededError") return true
@@ -137,8 +153,9 @@ function parse(value: string) {
 }
 
 function workspaceStorage(dir: string) {
-  const head = dir.slice(0, 12) || "workspace"
-  const sum = checksum(dir) ?? "0"
+  const normalized = normalizePath(dir)
+  const head = normalized.slice(0, 12) || "workspace"
+  const sum = checksum(normalized) ?? "0"
   return `opencode.workspace.${head}.${sum}.dat`
 }
 
